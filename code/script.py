@@ -1,17 +1,5 @@
 # -*- coding: utf-8 -*-
 
-#############
-### TO-DO ###
-#############
-
-#* [ ] Set better ticks value for the bar diagrams
-#    * Not very useful because moved on to density of trajectories
-#* [x] Try to find  a better way to analyse the shift in the data : perhaps try to analyse the density of paramecia
-#* [ ] 
-#* [ ] Statistical test : khi² for uniformely distributed stuff
-#       * Other pists : Kolmogorov-Smirnov, Shapiro-Wilk, 
-#* [ ] Compare comparable runs (control grad on grad off according to order of recording)
-#%%
 
 #################
 ### LIBRARIES ###
@@ -40,8 +28,8 @@ CONTROLS = list(range(5, 20, 3))
 GRAD_ON = [1,3] + list(range(6, 20, 3))
 GRAD_OFF = [2, 4] + list(range(7, 20, 3))
 
-# acquisition period : time between 2 frames taken in ms 
-T = 60
+# acquisition period : time between 2 frames taken in s 
+T = 0.06
 # length scale : 68.5 pi/mm : dpi in pi/mm
 dpi = 68.5
 #middle pixel of the pool (data on ImageJ)
@@ -341,7 +329,6 @@ def mean(df):
 N = 17
 
 
-dt = 0.06  # 17 Hz
 for N in range(11, 18, 3):
     max_x = 0
     min_x = 0
@@ -372,7 +359,6 @@ def mean(df):
     
     return(xs.mean())
 
-dt = 0.06  # 17 Hz
 for N in range(11, 18, 3):
     i0 = 0
     t, x = [], []
@@ -384,15 +370,15 @@ for N in range(11, 18, 3):
         data = dataframes[n][0]
         frames_group = dataframes[n][2]
         
-        t += list((data["imageNumber"] + i0)*dt)
+        t += list((data["imageNumber"] + i0)*T)
         x += list(data["xBody"])
         
-        frames_to_time = (data["imageNumber"].unique() + i0) * dt
+        frames_to_time = (data["imageNumber"].unique() + i0) * T
     
         i0 += max(data["imageNumber"]+1)
         
         ax.plot(frames_to_time, frames_group.apply(mean), c='k')
-        ax.axvline(i0*dt,c='r', linestyle="dashed")
+        ax.axvline(i0*T,c='r', linestyle="dashed")
     
     hist = ax.hist2d(t, x, bins=(60,60), cmap=plt.cm.jet, density=True, range=np.array([(0, 900), (-10, 10)]))
     fig.colorbar(hist[3], ax=ax)
@@ -409,7 +395,6 @@ def mean_y(df):
     
     return(ys.mean())
 
-dt = 0.06  # 17 Hz
 for N in range(11, 18, 3):
     i0 = 0
     t, y = [], []
@@ -421,15 +406,15 @@ for N in range(11, 18, 3):
         data = dataframes[n][0]
         frames_group = dataframes[n][2]
         
-        t += list((data["imageNumber"] + i0)*dt)
+        t += list((data["imageNumber"] + i0)*T)
         y += list(data["yBody"])
         
-        frames_to_time = (data["imageNumber"].unique() + i0) * dt
+        frames_to_time = (data["imageNumber"].unique() + i0) * T
     
         i0 += max(data["imageNumber"]+1)
         
         ax.plot(frames_to_time, frames_group.apply(mean_y), c='k')
-        ax.axvline(i0*dt,c='r', linestyle="dashed")
+        ax.axvline(i0*T,c='r', linestyle="dashed")
     
     hist = ax.hist2d(t, y, bins=(60,60), cmap=plt.cm.jet, density=True, range=np.array([(0, 900), (-10, 10)]))
     fig.colorbar(hist[3], ax=ax)
@@ -444,7 +429,6 @@ for N in range(11, 18, 3):
 
 #histograms on x 
 
-dt = 0.06  # 17 Hz
 for N in range(11, 18, 3):
     i0 = 0
     t, y = [], []
@@ -469,7 +453,6 @@ for N in range(11, 18, 3):
 
 #histograms on y
 
-dt = 0.06  # 17 Hz
 for N in range(11, 18, 3):
     i0 = 0
     t, y = [], []
